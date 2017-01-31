@@ -318,6 +318,8 @@ exports.create = function(element) {
 
         var docHeight = doc.frame.bounds().h;
 
+        console.log("Actual", doc.frame.actualWidth())
+
         var dpr = Math.max(1, window.devicePixelRatio || 1);
         
         var logicalWidth = Math.max(doc.frame.actualWidth(), element.clientWidth),
@@ -338,6 +340,11 @@ exports.create = function(element) {
         } else {
             element.style.overflow = 'auto';
         }
+
+
+        console.log("Actual ", doc.frame.actualWidth())
+        console.log("Logical ", logicalWidth)
+        console.log("Available ", availableWidth)
 
         var ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
