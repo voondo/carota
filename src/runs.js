@@ -1,7 +1,7 @@
 exports.formattingKeys = [ 'bold', 'italic', 'underline', 'strikeout', 'color', 'font', 'size', 'align', 'script' ];
 
 exports.defaultFormatting = {
-    size: 24,
+    size: 10,
     font: 'Arial',
     color: 'black',
     bold: false,
