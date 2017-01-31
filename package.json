@@ -12,11 +12,12 @@
     "prepublish": "node make"
   },
   "dependencies": {
-    "per": "0.1.7"
+    "per": "0.1.7",
+    "webfontloader": "^1.6.27"
   },
   "devDependencies": {
-    "webmake": ">=0.3.19",
-    "node-minify": ">=0.8.1",
+    "webmake": "0.3.19",
+    "node-minify": "0.8.1",
     "express": "3.3.4",
     "uglifyjs": "^2.4.10"
   },

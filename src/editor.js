@@ -307,6 +307,10 @@ exports.create = function(element) {
 
     var paint = function() {
 
+        if (doc.frame == undefined) {
+            return;
+        }
+
         var availableWidth = element.clientWidth * 1; // adjust to 0.5 to see if we draw in the wrong places!
         if (doc.width() !== availableWidth) {
             doc.width(availableWidth);

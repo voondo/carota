@@ -9,6 +9,7 @@ var util = require('./util');
 var frame = require('./frame');
 var codes = require('./codes');
 var rect = require('./rect');
+var WebFont = require('webfontloader');
 
 var makeEditCommand = function(doc, start, count, words) {
     var selStart = doc.selection.start, selEnd = doc.selection.end;
@@ -51,12 +52,73 @@ var prototype = node.derive({
         this.undo = [];
         this.redo = [];
         this._wordOrdinals = [];
-        this.words = per(characters(runs)).per(split(self.codes)).map(function(w) {
-            return word(w, self.codes);
-        }).all();
-        this.layout();
-        this.contentChanged.fire();
-        this.select(0, 0, takeFocus);
+
+        this.words = [];
+
+        var fontsToLoad = this.extractFontsFromRuns(runs)
+
+        this.ensureFontsLoaded(fontsToLoad, function(){
+            this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
+                return word(w, self.codes);
+            }).all();;
+            console.log(59);
+            this.layout();
+            this.contentChanged.fire();
+            this.select(0, 0, takeFocus);
+        }.bind(this));
+
+    },
+    extractFontsFromRuns: function(runs) {
+        var fontsToload = [{name:'Arial', modifiers:['n4']}];
+
+        for(var i = 0; i < runs.length; ++i) {
+            var run = runs[i];
+            var font = run.font || 'Arial';
+            var modifiers = this.concatModifiers(run);
+            if (!fontsToload.some(function(fontObj){return fontObj.name == font})) {
+                fontsToload.push({name:font, modifiers:modifiers});
+            } else {
+                var fontToModify = fontsToload.find(function(fontObj){return fontObj.name == font});
+                for (var m = 0; m < modifiers.length; ++m) {
+                    var currentModifier = modifiers[m];
+                    if (fontToModify.modifiers.indexOf(currentModifier) == -1) {
+                        fontToModify.modifiers.push(currentModifier);
+                    }
+                }
+            }
+        }
+
+        var formattedFonts = [];
+        for(var i = 0; i < fontsToload.length; ++i) {
+            var currentFont = fontsToload[i];
+            var formattedFont = currentFont.name + ':' + currentFont.modifiers.join(',');
+            formattedFonts.push(formattedFont);
+        }
+        return formattedFonts;
+    },
+    ensureFontsLoaded: function(formattedFonts, callback){
+        WebFont.load({
+            custom: {
+                families: formattedFonts
+            },
+            active: function () {
+                callback();
+            }
+        });
+    },
+    concatModifiers: function(run){
+        var modifiers = ['n4'];
+        if (run.bold) {
+            modifiers.push('n7');
+        }
+        if (run.italic) {
+            modifiers.push('i4');
+        }
+        if (run.bold && run.italic) {
+            modifiers.push('i7');
+        }
+
+        return modifiers;
     },
     layout: function() {
         this.frame = null;
@@ -66,9 +128,12 @@ var prototype = node.derive({
             console.error(x);
         }
         if (!this.frame) {
-            console.error('A bug somewhere has produced an invalid state - rolling back');
-            this.performUndo();
-        } else if (this._nextSelection) {
+            if (this.canUndo) {
+                console.error('A bug somewhere has produced an invalid state - rolling back');
+                this.performUndo();
+            }
+        }
+        if (this._nextSelection) {
             var next = this._nextSelection;
             delete this._nextSelection;
             this.select(next.start, next.end);
@@ -407,6 +472,7 @@ var prototype = node.derive({
             oldCommand(function(newCommand) {
                 toStack.push(newCommand);
             });
+            console.log(469);
             this.layout();
             this.contentChanged.fire();
         }
@@ -434,6 +500,7 @@ var prototype = node.derive({
                 }
             }));
             if (changed) {
+                console.log(497);
                 self.layout();
                 self.contentChanged.fire();
             }

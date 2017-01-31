@@ -68,6 +68,7 @@ Range.prototype.getFormatting = function() {
 
 Range.prototype.setFormatting = function(attribute, value) {
     var range = this;
+    console.log(range, attribute, value);
     if (attribute === 'align') {
         // Special case: expand selection to surrounding paragraphs
         range = range.doc.paragraphRange(range.start, range.end);
@@ -78,8 +79,14 @@ Range.prototype.setFormatting = function(attribute, value) {
         var saved = range.save();
         var template = {};
         template[attribute] = value;
+
         runs.format(saved, template);
-        range.setText(saved);
+        var formattedFonts = this.doc.extractFontsFromRuns(saved);
+        console.log(formattedFonts);
+
+        this.doc.ensureFontsLoaded(formattedFonts, function(words){
+            range.setText(saved);
+        });
     }
 };
 
