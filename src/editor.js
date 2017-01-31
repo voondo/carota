@@ -341,11 +341,6 @@ exports.create = function(element) {
             element.style.overflow = 'auto';
         }
 
-
-        console.log("Actual ", doc.frame.actualWidth())
-        console.log("Logical ", logicalWidth)
-        console.log("Available ", availableWidth)
-
         var ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
 
