@@ -5,6 +5,7 @@ function Range(doc, start, end) {
     this.doc = doc;
     this.start = start;
     this.end = end;
+    this.pendingRange = undefined;
     if (start > end) {
         this.start = end;
         this.end = start;
@@ -70,7 +71,7 @@ Range.prototype.getFormatting = function() {
 };
 
 Range.prototype.setFormatting = function(attribute, value) {
-    var range = this;
+    var range = this.pendingRange == undefined ? this : this.pendingRange;
     console.log(range, attribute, value);
     if (attribute === 'align') {
         // Special case: expand selection to surrounding paragraphs
@@ -85,12 +86,11 @@ Range.prototype.setFormatting = function(attribute, value) {
 
         runs.format(saved, template);
         var formattedFonts = this.doc.extractFontsFromRuns(saved);
-        console.log(formattedFonts);
-        range.setText(saved);
 
         this.doc.ensureFontsLoaded(formattedFonts, function(words){
             range.setText(saved);
-        });
+            this.pendingRange = undefined;
+        }.bind(this));
     }
 };
 
