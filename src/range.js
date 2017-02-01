@@ -64,15 +64,11 @@ Range.prototype.getFormatting = function() {
         range.start = pos;
         range.end = pos + 1;
     }
-    per(range.runs, range).reduce(runs.merge).forEach(function(item) {
-        console.log(item);
-    })
     return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
 };
 
 Range.prototype.setFormatting = function(attribute, value) {
     var range = this.pendingRange == undefined ? this : this.pendingRange;
-    console.log(range, attribute, value);
     if (attribute === 'align') {
         // Special case: expand selection to surrounding paragraphs
         range = range.doc.paragraphRange(range.start, range.end);
