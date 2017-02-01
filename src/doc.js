@@ -436,7 +436,7 @@ var prototype = node.derive({
         var self = this;
         var getFormatting = function() {
             if (!cachedFormatting) {
-                cachedFormatting = self.selectedRange().getAllFormatting();
+                cachedFormatting = self.selectedRange().getFormatting();
             }
             return cachedFormatting;
         };
