@@ -63,6 +63,9 @@ Range.prototype.getFormatting = function() {
         range.start = pos;
         range.end = pos + 1;
     }
+    per(range.runs, range).reduce(runs.merge).forEach(function(item) {
+        console.log(item);
+    })
     return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
 };
 
@@ -83,6 +86,7 @@ Range.prototype.setFormatting = function(attribute, value) {
         runs.format(saved, template);
         var formattedFonts = this.doc.extractFontsFromRuns(saved);
         console.log(formattedFonts);
+        range.setText(saved);
 
         this.doc.ensureFontsLoaded(formattedFonts, function(words){
             range.setText(saved);
