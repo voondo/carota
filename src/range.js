@@ -63,7 +63,24 @@ Range.prototype.getFormatting = function() {
         range.start = pos;
         range.end = pos + 1;
     }
+
     return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
+};
+
+Range.prototype.getAllFormatting = function() {
+    var range = this;
+    if (range.start === range.end) {
+        var pos = range.start;
+        // take formatting of character before, if any, because that's
+        // where plain text picks up formatting when inserted
+        if (pos > 0) {
+            pos--;
+        }
+        range.start = pos;
+        range.end = pos + 1;
+    }
+
+    return per(range.runs, range).reduce(runs.merge).all() || runs.defaultFormatting;
 };
 
 Range.prototype.setFormatting = function(attribute, value) {
