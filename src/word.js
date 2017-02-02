@@ -113,7 +113,7 @@ module.exports = function(coords, codes) {
     var text, space;
     if (!coords) {
         // special end-of-document marker, mostly like a newline with no formatting
-        text = [{ text: '\n' }];
+        text = [{ text: '\n', size: 9}];
         space = [];
     } else {
         text = coords.text.cut(coords.spaces);

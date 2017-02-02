@@ -60,8 +60,8 @@ var prototype = node.derive({
         this.ensureFontsLoaded(fontsToLoad, function(){
             this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
                 return word(w, self.codes);
-            }).all();;
-            console.log(59);
+            }).all();
+
             this.layout();
             this.contentChanged.fire();
             this.select(0, 0, takeFocus);
@@ -472,7 +472,6 @@ var prototype = node.derive({
             oldCommand(function(newCommand) {
                 toStack.push(newCommand);
             });
-            console.log(469);
             this.layout();
             this.contentChanged.fire();
         }
@@ -500,7 +499,6 @@ var prototype = node.derive({
                 }
             }));
             if (changed) {
-                console.log(497);
                 self.layout();
                 self.contentChanged.fire();
             }
