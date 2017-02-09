@@ -57,11 +57,14 @@ var prototype = node.derive({
 
         var fontsToLoad = this.extractFontsFromRuns(runs)
 
+        console.log("in load");
         this.ensureFontsLoaded(fontsToLoad, function(){
+            console.log("fonts loaded");
             this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
                 return word(w, self.codes);
             }).all();
 
+            console.log("Calling Layout");
             this.layout();
             this.contentChanged.fire();
             this.select(0, 0, takeFocus);
@@ -121,9 +124,12 @@ var prototype = node.derive({
         return modifiers;
     },
     layout: function() {
+        console.log("In layout");
         this.frame = null;
         try {
             this.frame = per(this.words).per(frame(0, 0, this._width, 0, this)).first();
+
+            console.log(this.frame);
         } catch (x) {
             console.error(x);
         }
