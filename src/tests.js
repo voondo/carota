@@ -219,6 +219,5 @@ checkInlines([ 'Dear ',
 ]);
 
 if (failed === 0) {
-    console.log('');
     console.log('All good');
 }
