@@ -292,6 +292,10 @@ exports.create = function(element) {
     }
 
     function getVerticalOffset() {
+        if(doc.frame == undefined) {
+            //frame is undefined in internet explorer when the text is empty.
+            return 0;
+        }
         var docHeight = doc.frame.bounds().h;
         if (docHeight < element.clientHeight) { 
             switch (verticalAlignment) {
