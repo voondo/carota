@@ -97,11 +97,13 @@ var prototype = node.derive({
         return formattedFonts;
     },
     ensureFontsLoaded: function(formattedFonts, callback){
+        console.log('ensuring fonts are loaded', formattedFonts)
         WebFont.load({
             custom: {
                 families: formattedFonts
             },
             active: function () {
+                console.log("Heck yeah we got fonts!");
                 callback();
             }
         });
