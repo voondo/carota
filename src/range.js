@@ -67,23 +67,30 @@ Range.prototype.getFormatting = function() {
     return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
 };
 
-Range.prototype.setFormatting = function(attribute, value) {
+Range.prototype.setFormatting = function(formatting) {
     var range = this.pendingRange == undefined ? this : this.pendingRange;
-    if (attribute === 'align') {
-        // Special case: expand selection to surrounding paragraphs
-        range = range.doc.paragraphRange(range.start, range.end);
+    const formats = Object.keys(formatting);
+    let template = {};
+    for (let id of formats) {
+        if (id === 'align') {
+            // if alignment changed, apply to the whole paragraph
+            range = range.doc.paragraphRange(range.start, range.end);
+        }
+
+        if (id in runs.defaultFormatting) {
+            template[id] = formatting[id];
+        }
     }
+
     if (range.start === range.end) {
-        range.doc.modifyInsertFormatting(attribute, value);
+        range.doc.modifyInsertFormatting(template);
     } else {
         var saved = range.save();
-        var template = {};
-        template[attribute] = value;
 
         runs.format(saved, template);
         var formattedFonts = this.doc.extractFontsFromRuns(saved);
 
-        this.doc.ensureFontsLoaded(formattedFonts, function(words){
+        this.doc.ensureFontsLoaded(formattedFonts, function (words) {
             range.setText(saved);
             this.pendingRange = undefined;
         }.bind(this));
