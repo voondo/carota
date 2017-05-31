@@ -364,7 +364,9 @@
             carota.dom.handleEvent(elem, 'change', function() {
                 var range = exampleEditor.selectedRange();
                 var val = elem.nodeName === 'INPUT' ? elem.checked : elem.value;
-                range.setFormatting(id, val);
+                var formatting = {};
+                formatting[id] = val;
+                range.setFormatting(formatting);
             });
 
             // When the selected range coordinates change, update the control
@@ -388,7 +390,7 @@
         carota.dom.handleEvent(valign, 'change', function() {
             exampleEditor.setVerticalAlignment(valign.value);
         });
-        
+
         // We don't update the JSON view until half a second after the last change
         // to avoid slowing things down too much
         var persistenceTextArea = document.querySelector('#examplePersistence textarea');
