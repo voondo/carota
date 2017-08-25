@@ -71,7 +71,7 @@ Range.prototype.setFormatting = function(formatting) {
     var range = this.pendingRange == undefined ? this : this.pendingRange;
     const formats = Object.keys(formatting);
     let template = {};
-    formats.forEach(id => {
+    formats.forEach(function(id) {
         if (id === 'align') {
             // if alignment changed, apply to the whole paragraph
             range = range.doc.paragraphRange(range.start, range.end);
