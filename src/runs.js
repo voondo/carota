@@ -72,6 +72,14 @@ exports.consolidate = function() {
             (typeof current.text != 'string') ||
             (typeof run.text != 'string')) {
             current = exports.clone(run);
+
+            current.size = current.size ? current.size : exports.defaultFormatting.size;
+            current.font = current.font ? current.font : exports.defaultFormatting.font;
+            current.color = current.color ? current.color : exports.defaultFormatting.color
+            current.bold = current.bold ? current.bold : exports.defaultFormatting.bold;
+            current.italic = current.italic ? current.italic : exports.defaultFormatting.italic;
+            current.align = current.align ? current.align : exports.defaultFormatting.align;
+
             emit(current);
         } else {
             current.text += run.text;
