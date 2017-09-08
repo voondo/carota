@@ -183,8 +183,8 @@ var prototype = node.derive({
     insert: function(text, takeFocus) {
         this.select(this.selection.end + this.selectedRange().setText(text), null, takeFocus);
     },
-    modifyInsertFormatting: function(attribute, value) {
-        this.nextInsertFormatting[attribute] = value;
+    modifyInsertFormatting: function(template) {
+        this.nextInsertFormatting = Object.assign(this.nextInsertFormatting, template);
         this.notifySelectionChanged();
     },
     applyInsertFormatting: function(text) {
@@ -282,9 +282,9 @@ var prototype = node.derive({
                     for (;;) {
                         var spliceCount = self._filtersRunning;
                         if (!self.editFilters.some(function(filter) {
-                            filter(self);
-                            return spliceCount !== self._filtersRunning;
-                        })) {
+                                filter(self);
+                                return spliceCount !== self._filtersRunning;
+                            })) {
                             break; // No further changes were made
                         }
                     }
@@ -323,8 +323,8 @@ var prototype = node.derive({
             }
         } else {
             prefix = per({ end: startWord.offset })
-                    .per(startWord.word.runs, startWord.word)
-                    .all();
+                .per(startWord.word.runs, startWord.word)
+                .all();
         }
 
         var suffix;
@@ -337,8 +337,8 @@ var prototype = node.derive({
             }
         } else {
             suffix = per({ start: endWord.offset })
-                    .per(endWord.word.runs, endWord.word)
-                    .all();
+                .per(endWord.word.runs, endWord.word)
+                .all();
         }
 
         var oldLength = this.frame.length;
@@ -457,10 +457,10 @@ var prototype = node.derive({
         this.nextInsertFormatting = {};
 
         /*  NB. always fire this even if the positions stayed the same. The
-            event means that the formatting of the selection has changed
-            (which can happen either by moving the selection range or by
-            altering the formatting)
-        */
+         event means that the formatting of the selection has changed
+         (which can happen either by moving the selection range or by
+         altering the formatting)
+         */
         this.notifySelectionChanged(takeFocus);
     },
     performUndo: function(redo) {
