@@ -337,12 +337,12 @@ exports.create = function(element) {
         spacer.style.width = logicalWidth + 'px';
         spacer.style.height = Math.max(docHeight, element.clientHeight) + 'px';
 
-        if (docHeight < (element.clientHeight - 50) &&
-            doc.frame.actualWidth() <= availableWidth) {
+        //if (docHeight < (element.clientHeight - 50) &&
+        //    doc.frame.actualWidth() <= availableWidth) {
             element.style.overflow = 'hidden';
-        } else {
-            element.style.overflow = 'auto';
-        }
+        //} else {
+        //    element.style.overflow = 'auto';
+        //}
 
         var ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
@@ -352,6 +352,7 @@ exports.create = function(element) {
 
         doc.draw(ctx, rect(0, element.scrollTop, logicalWidth, logicalHeight));
         doc.drawSelection(ctx, selectDragStart || (document.activeElement === textArea));
+        doc.canvasChanged.fire();
     };
 
     dom.handleEvent(element, 'scroll', paint);
@@ -400,9 +401,6 @@ exports.create = function(element) {
         textArea.value = textAreaContent;
         textArea.select();
 
-        setTimeout(function() {
-            textArea.focus();
-        }, 10);
     };
 
     doc.selectionChanged(function(getformatting, takeFocus) {
@@ -491,5 +489,6 @@ exports.create = function(element) {
     update();
 
     doc.sendKey = handleKey;
+    doc.paint = paint;
     return doc;
 };

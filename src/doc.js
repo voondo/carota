@@ -97,6 +97,7 @@ var prototype = node.derive({
         return formattedFonts;
     },
     ensureFontsLoaded: function(formattedFonts, callback){
+      return callback(); // FIXME
         WebFont.load({
             custom: {
                 families: formattedFonts
@@ -519,6 +520,7 @@ exports = module.exports = function() {
     };
     doc.selectionChanged = util.event();
     doc.contentChanged = util.event();
+    doc.canvasChanged = util.event();
     doc.editFilters = [codes.editFilter];
     doc.load([]);
     return doc;
