@@ -321,6 +321,10 @@ exports.create = function(element) {
             doc.width(availableWidth);
         }
 
+        if (doc.frame == undefined) {
+            return;
+        }
+
         var docHeight = doc.frame.bounds().h;
 
         var dpr = Math.max(1, window.devicePixelRatio || 1);

@@ -10,6 +10,7 @@ var frame = require('./frame');
 var codes = require('./codes');
 var rect = require('./rect');
 var WebFont = require('webfontloader');
+var webFontLoading = false
 
 var makeEditCommand = function(doc, start, count, words) {
     var selStart = doc.selection.start, selEnd = doc.selection.end;
@@ -57,22 +58,22 @@ var prototype = node.derive({
 
         var fontsToLoad = this.extractFontsFromRuns(runs)
 
-        this.ensureFontsLoaded(fontsToLoad)
-        this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
-            return word(w, self.codes);
-        }).all();
+        this.ensureFontsLoaded(fontsToLoad, () => {
+          this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
+              return word(w, self.codes);
+          }).all();
 
-        this.layout();
-        this.contentChanged.fire();
-        this.select(0, 0, takeFocus);
-
+          this.layout();
+          this.contentChanged.fire();
+          this.select(0, 0, takeFocus);
+        })
     },
     extractFontsFromRuns: function(runs) {
         var fontsToload = [];
 
         for(var i = 0; i < runs.length; ++i) {
             var run = runs[i];
-            var font = run.font || 'Arial';
+            var font = run.font || 'Roboto';
             var modifiers = this.concatModifiers(run);
             if (!fontsToload.some(function(fontObj){return fontObj.name == font})) {
                 fontsToload.push({name:font, modifiers:modifiers});
@@ -95,20 +96,31 @@ var prototype = node.derive({
         }
         return formattedFonts;
     },
-    ensureFontsLoaded: function(formattedFonts){
-      if(!formattedFonts.length) return
-      //console.log("ensure fonts loaded", formattedFonts)
-      WebFont.load({
-          google: {
-              families: formattedFonts
-          },
-          active: () => {
-            this.layout();
-            this.contentChanged.fire();
-            if(!this.selection) this.select(0, 0, false);
-            //console.log("font active", formattedFonts)
-          }
-      });
+    ensureFontsLoaded: function(formattedFonts, cb){
+      if(!formattedFonts.length) {
+        console.log("no fonts to load")
+        cb()
+      } else {
+        console.log("loading fonts", formattedFonts)
+        //console.log("ensure fonts loaded", formattedFonts)
+        if(webFontLoading) {
+          setTimeout(() => {
+            this.ensureFontsLoaded(formattedFonts, cb)
+          }, 10)
+        } else {
+          webFontLoading = true
+          WebFont.load({
+              google: {
+                  families: formattedFonts
+              },
+              active: () => {
+                console.log("fonts loaded")
+                webFontLoading = false
+                cb()
+              }
+          });
+        }
+      }
     },
     concatModifiers: function(run){
         var modifiers = ['n4'];
@@ -526,6 +538,5 @@ exports = module.exports = function() {
     doc.contentChanged = util.event();
     doc.canvasChanged = util.event();
     doc.editFilters = [codes.editFilter];
-    doc.load([]);
     return doc;
 };
