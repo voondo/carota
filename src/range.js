@@ -90,10 +90,9 @@ Range.prototype.setFormatting = function(formatting) {
         runs.format(saved, template);
         var formattedFonts = this.doc.extractFontsFromRuns(saved);
 
-        this.doc.ensureFontsLoaded(formattedFonts, () => {
-          range.setText(saved);
-          this.pendingRange = undefined;
-        })
+        this.doc.ensureFontsLoaded(formattedFonts)
+        range.setText(saved);
+        this.pendingRange = undefined;
     }
 };
 

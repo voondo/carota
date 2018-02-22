@@ -57,15 +57,14 @@ var prototype = node.derive({
 
         var fontsToLoad = this.extractFontsFromRuns(runs)
 
-        this.ensureFontsLoaded(fontsToLoad, () => {
-          this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
-              return word(w, self.codes);
-          }).all();
+        this.ensureFontsLoaded(fontsToLoad)
+        this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
+            return word(w, self.codes);
+        }).all();
 
-          this.layout();
-          this.contentChanged.fire();
-          this.select(0, 0, takeFocus);
-        })
+        this.layout();
+        this.contentChanged.fire();
+        this.select(0, 0, takeFocus);
 
     },
     extractFontsFromRuns: function(runs) {
@@ -96,7 +95,7 @@ var prototype = node.derive({
         }
         return formattedFonts;
     },
-    ensureFontsLoaded: function(formattedFonts, cb){
+    ensureFontsLoaded: function(formattedFonts){
       if(!formattedFonts.length) return
       //console.log("ensure fonts loaded", formattedFonts)
       WebFont.load({
@@ -104,7 +103,10 @@ var prototype = node.derive({
               families: formattedFonts
           },
           active: () => {
-            cb()
+            this.layout();
+            this.contentChanged.fire();
+            if(!this.selection) this.select(0, 0, false);
+            //console.log("font active", formattedFonts)
           }
       });
     },
