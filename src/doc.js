@@ -98,10 +98,10 @@ var prototype = node.derive({
     },
     ensureFontsLoaded: function(formattedFonts, cb){
       if(!formattedFonts.length) {
-        console.log("no fonts to load")
+        //console.log("no fonts to load")
         cb()
       } else {
-        console.log("loading fonts", formattedFonts)
+        //console.log("loading fonts", formattedFonts)
         //console.log("ensure fonts loaded", formattedFonts)
         if(webFontLoading) {
           setTimeout(() => {
@@ -114,7 +114,7 @@ var prototype = node.derive({
                   families: formattedFonts
               },
               active: () => {
-                console.log("fonts loaded")
+                //console.log("fonts loaded")
                 webFontLoading = false
                 cb()
               }
