@@ -2,7 +2,7 @@ exports.formattingKeys = [ 'bold', 'italic', 'underline', 'strikeout', 'color', 
 
 exports.defaultFormatting = {
     size: 24,
-    font: 'Arial',
+    font: 'Roboto',
     color: 'black',
     bold: false,
     italic: false,

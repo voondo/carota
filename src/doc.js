@@ -57,19 +57,18 @@ var prototype = node.derive({
 
         var fontsToLoad = this.extractFontsFromRuns(runs)
 
-        this.ensureFontsLoaded(fontsToLoad, function(){
-            this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
-                return word(w, self.codes);
-            }).all();
+        this.ensureFontsLoaded(fontsToLoad)
+        this.words = per(characters(runs)).per(split(self.codes)).map(function (w) {
+            return word(w, self.codes);
+        }).all();
 
-            this.layout();
-            this.contentChanged.fire();
-            this.select(0, 0, takeFocus);
-        }.bind(this));
+        this.layout();
+        this.contentChanged.fire();
+        this.select(0, 0, takeFocus);
 
     },
     extractFontsFromRuns: function(runs) {
-        var fontsToload = [{name:'Arial', modifiers:['n4']}];
+        var fontsToload = [];
 
         for(var i = 0; i < runs.length; ++i) {
             var run = runs[i];
@@ -91,21 +90,25 @@ var prototype = node.derive({
         var formattedFonts = [];
         for(var i = 0; i < fontsToload.length; ++i) {
             var currentFont = fontsToload[i];
-            var formattedFont = currentFont.name + ':' + currentFont.modifiers.join(',');
+            var formattedFont = currentFont.name // + ':' + currentFont.modifiers.join(',');
             formattedFonts.push(formattedFont);
         }
         return formattedFonts;
     },
-    ensureFontsLoaded: function(formattedFonts, callback){
-      return callback(); // FIXME
-        WebFont.load({
-            custom: {
-                families: formattedFonts
-            },
-            active: function () {
-                callback();
-            }
-        });
+    ensureFontsLoaded: function(formattedFonts){
+      if(!formattedFonts.length) return
+      //console.log("ensure fonts loaded", formattedFonts)
+      WebFont.load({
+          google: {
+              families: formattedFonts
+          },
+          active: () => {
+            this.layout();
+            this.contentChanged.fire();
+            if(!this.selection) this.select(0, 0, false);
+            //console.log("font active", formattedFonts)
+          }
+      });
     },
     concatModifiers: function(run){
         var modifiers = ['n4'];
@@ -381,17 +384,17 @@ var prototype = node.derive({
                 if (nodeBefore.newLine) {
                     var newLineBounds = nodeBefore.bounds();
                     var lineBounds = nodeBefore.parent().parent().bounds();
-                    b = rect(lineBounds.l, lineBounds.b, 1, newLineBounds.h);
+                    b = rect(lineBounds.l, lineBounds.b, 2, newLineBounds.h);
                 } else {
                     b = nodeBefore.bounds();
-                    b = rect(b.r, b.t, 1, b.h);
+                    b = rect(b.r, b.t, 2, b.h);
                 }
             } else {
                 b = node.bounds();
                 if (b.h) {
-                    b = rect(b.l, b.t, 1, b.h);
+                    b = rect(b.l, b.t, 2, b.h);
                 } else {
-                    b = rect(b.l, b.t, b.w, 1);
+                    b = rect(b.l, b.t, b.w, 2);
                 }
             }
             return b;
@@ -423,7 +426,8 @@ var prototype = node.derive({
             }
         } else {
             ctx.save();
-            ctx.fillStyle = hasFocus ? 'rgba(0, 100, 200, 0.3)' : 'rgba(160, 160, 160, 0.3)';
+            //ctx.fillStyle = hasFocus ? 'rgba(233, 156, 123, 0.3)' : 'rgba(160, 160, 160, 0.3)';
+            ctx.fillStyle = 'rgba(233, 156, 123, 0.3)'
             this.selectedRange().parts(function(part) {
                 part.bounds(true).fill(ctx);
             });
