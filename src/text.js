@@ -153,9 +153,9 @@ exports.draw = function(ctx, str, formatting, left, baseline, width, ascent, des
     }
     ctx.fillText(str === '\n' ? exports.enter : str, left, baseline);
     if (formatting.underline) {
-        ctx.fillRect(left, 1 + baseline, width, 1);
+        ctx.fillRect(left, 5 + baseline, width, 2);
     }
     if (formatting.strikeout) {
-        ctx.fillRect(left, 1 + baseline - (ascent/2), width, 1);
+        ctx.fillRect(left, 1 + baseline - (ascent/3), width, 2);
     }
 };
